@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  elasticsearch:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: elasticsearch    
+    environment:
+      - discovery.type=single-node
+      - cluster.name=my-cluster
+      - node.name=node-1
+      - path.data=/usr/share/elasticsearch/data
+      - path.logs=/usr/share/elasticsearch/logs
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ELASTIC_PASSWORD=YPKPnybOpKL1234"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: 2097152
+        hard: 2097152
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.5.0
+    container_name: kibana
+    restart: always
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - SERVER_NAME=localhost
+      - SERVER_PORT=5601
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=4rIEpr83MHh4CesVIuSL
+      - XPACK_SECURITY_ENABLED=true
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.5.0
+    container_name: logstash
+    restart: always
+    volumes:
+      - ./csv_files:/opt/csv_files
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    
+volumes:
+  elasticsearch-data:
+    driver: local
+
