@@ -11,7 +11,7 @@ services:
       - path.data=/usr/share/elasticsearch/data
       - path.logs=/usr/share/elasticsearch/logs
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "ELASTIC_PASSWORD=YPKPnybOpKL1234"
+      - "ELASTIC_PASSWORD="
     ports:
       - "9200:9200"
     volumes:
@@ -33,7 +33,7 @@ services:
       - SERVER_NAME=localhost
       - SERVER_PORT=5601
       - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=4rIEpr83MHh4CesVIuSL
+      - ELASTICSEARCH_PASSWORD=
       - XPACK_SECURITY_ENABLED=true
   logstash:
     image: docker.elastic.co/logstash/logstash:8.5.0
